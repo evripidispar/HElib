@@ -330,6 +330,17 @@ public:
   void automorph(long k); // Apply automorphism F(X) -> F(X^k) (gcd(k,m)=1)
   Ctxt& operator>>=(long k) { automorph(k); return *this; }
 
+  /*Modification for comparator circuit 
+
+  30 October 2014
+
+  Contributors: Evripidis Paraskevas, Charalampos Papamanthou */
+
+
+  Ctxt& operator>(const Ctxt& other); //compare two ciphetexts
+  Ctxt& CMPcircuit(const Ctxt& other, const Ctxt& carry);
+
+
   //! @brief automorphism with re-lienarization
   void smartAutomorph(long k);
   // Apply F(X)->F(X^k) followed by re-liearization. The automorphism is

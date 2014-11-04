@@ -222,10 +222,13 @@ void  TestIt(long R, long p, long r, long d, long c, long k, long w,
    v.alt_mul(*ptr);
 */
   v.random();
-  // v.print(cout); cout << "\n";
+  cout << ea.size() << endl;
+  v.print(cout); cout << "\n";
 
   // encrypt the random vector
   Ctxt ctxt(publicKey);
+  //cout << "ciphertext parts" ;
+  //cout << ctxt.parts.size() <<endl;
   startFHEtimer("ea.encrypt");
   ea.encrypt(ctxt, publicKey, v);
   stopFHEtimer("ea.encrypt");

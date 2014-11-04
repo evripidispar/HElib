@@ -688,6 +688,82 @@ Ctxt& Ctxt::operator*=(const Ctxt& other)
   return *this;
 }
 
+/*Modifications for comparator circuit
+30 October 2014
+Contributors: Evripidis Paraskevas, Charalampos Papamanthou*/
+
+Ctxt& Ctxt::operator>(const Ctxt& other)
+{
+  FHE_TIMER_START;
+  //Special Case: if *this is empty then do nothing
+  if  (this->isEmpty()) return *this;
+  Ctxt carryCtxt(this->pubKey);
+  cout << parts.size();
+  for (size_t i=0; i<parts.size(); i++){
+  Ctxt tempCtxt1(this->pubKey);
+  Ctxt tempCtxt2(this->pubKey);
+
+  //tempCtxt1 = *this;
+  //tempCtxt2 = other;
+
+  tempCtxt1.addPart(parts[i]);
+  tempCtxt2.addPart(other.parts[i]);
+
+  tempCtxt1 += carryCtxt; //XOR
+  tempCtxt2 += carryCtxt; //XOR
+
+  tempCtxt1 *= tempCtxt2; //AND operation
+
+  tempCtxt1 += *this; //XOR
+  carryCtxt = tempCtxt1; //new carry
+  }
+
+  *this = carryCtxt; //copy the result into *this
+
+  cout<< carryCtxt.parts.size()<<endl;
+
+  FHE_TIMER_STOP;
+  return *this;
+
+}
+
+// Modifications regarding comparator
+
+Ctxt& Ctxt::CMPcircuit(const Ctxt& other, const Ctxt& carry){
+
+FHE_TIMER_START;
+  //Special Case: if *this is empty then do nothing
+  if  (this->isEmpty()) return *this;
+
+  long g = GCD(ptxtSpace, other.ptxtSpace);
+  assert (g>1);
+  this->ptxtSpace = g;
+  Ctxt tmpCtxt1(this->pubKey, this->ptxtSpace);
+
+  long g1 = GCD(ptxtSpace, carry.ptxtSpace);
+  assert (g1>1);
+  this->ptxtSpace = g1;
+  Ctxt tmpCtxt2(this->pubKey, this->ptxtSpace);
+
+
+  tmpCtxt1 = other;
+  tmpCtxt2 = carry;
+
+  tmpCtxt1 += carry; //XOR
+  tmpCtxt2 += other; //XOR
+
+  tmpCtxt1 *= tmpCtxt2; //AND operation
+
+  tmpCtxt1 += *this; //XOR
+
+  *this = tmpCtxt1; //copy the result into *this
+
+  cout<< this->parts.size()<<endl;
+
+  FHE_TIMER_STOP;
+  return *this;
+
+}
 // Higher-level multiply routines that include also modulus-switching
 // and re-linearization
 
