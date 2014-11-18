@@ -735,22 +735,22 @@ FHE_TIMER_START;
   //Special Case: if *this is empty then do nothing
   if  (this->isEmpty()) return *this;
 
-  long g = GCD(ptxtSpace, other.ptxtSpace);
-  assert (g>1);
-  this->ptxtSpace = g;
-  Ctxt tmpCtxt1(this->pubKey, this->ptxtSpace);
+  //long g = GCD(ptxtSpace, other.ptxtSpace);
+  //assert (g>1);
+  //this->ptxtSpace = g;
+  Ctxt tmpCtxt1(this->pubKey);
 
-  long g1 = GCD(ptxtSpace, carry.ptxtSpace);
-  assert (g1>1);
-  this->ptxtSpace = g1;
-  Ctxt tmpCtxt2(this->pubKey, this->ptxtSpace);
+  //long g1 = GCD(ptxtSpace, carry.ptxtSpace);
+  //assert (g1>1);
+  //this->ptxtSpace = g1;
+  Ctxt tmpCtxt2(this->pubKey);
 
 
   tmpCtxt1 = other;
   tmpCtxt2 = carry;
 
   tmpCtxt1 += carry; //XOR
-  tmpCtxt2 += other; //XOR
+  tmpCtxt2 += *this; //XOR
 
   tmpCtxt1 *= tmpCtxt2; //AND operation
 
@@ -758,7 +758,7 @@ FHE_TIMER_START;
 
   *this = tmpCtxt1; //copy the result into *this
 
-  cout<< this->parts.size()<<endl;
+  //cout<< this->parts.size()<<endl;
 
   FHE_TIMER_STOP;
   return *this;
